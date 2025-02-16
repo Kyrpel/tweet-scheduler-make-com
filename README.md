@@ -1,135 +1,137 @@
 # Tweet Scheduler with Make.com Automation 🚀
 
-Hi there! This is a cool tool that helps you schedule tweets and post them automatically. It's like having a robot helper that posts your tweets for you! 
+A tool that helps you automatically schedule and post tweets. It can read tweet screenshots or text input, create variations, and post them automatically using Make.com.
 
-## What You'll Need 🛠️
+## Setup Guide
 
-1. An OpenAI API key (ask your parents/guardian to help you get one)
-2. A Google account with Google Sheets
-3. A Make.com account (it's free to start!)
-4. A Twitter/X account
+### Step 1: OpenAI API Setup
+1. Go to [OpenAI's website](https://platform.openai.com/signup)
+2. Create an account or sign in
+3. Click on your profile icon → View API Keys
+4. Click "Create new secret key"
+5. Copy your API key (you'll need it later)
 
-## Google Sheets Structure 📊
+### Step 2: Google Setup
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project
+3. Enable Google Sheets API:
+   - Search for "Google Sheets API"
+   - Click "Enable"
+4. Create credentials:
+   - Go to "Credentials" in left menu
+   - Click "Create Credentials" → "Service Account"
+   - Fill in service account details
+   - Click "Done"
+5. Download credentials:
+   - Click on your new service account
+   - Go to "Keys" tab
+   - Add Key → Create New Key → JSON
+   - Save the downloaded file as "fotogenie-ai-credentials.json"
+6. Create a Google Sheet:
+   - Go to [Google Sheets](https://sheets.google.com)
+   - Create a new sheet
+   - Copy the sheet ID from URL (the long string between /d/ and /edit)
+   - Share the sheet with the email from your credentials file
 
-Your Google Sheet should have these columns(Will be created by the program):
+### Step 3: Make.com Setup
+1. Create account at [Make.com](https://www.make.com)
+2. Create a new scenario
+3. Set up Google Sheets trigger:
+   ![Google Sheets Setup](./images/google-sheets-setup.jpg)
+   - Add "Google Sheets" trigger
+   - Connect your Google account
+   - Select your spreadsheet
+   - Watch for new rows
+   - Set "Table contains headers" to Yes
+
+4. Add Twitter/X posting:
+   ![Twitter Posting Setup](./images/twitter-posting.jpg)
+   - Add "Create a Tweet" action
+   - Connect your Twitter account
+   - Map the columns:
+     - Text = Content column
+     - Media = Image column
+     - Video = Video column
+
+5. Create multiple scenarios:
+   ![Make.com Automation Setup](./images/make-automation.jpg)
+   - Duplicate your scenario for each type
+   - In each scenario, filter by Type number
+   - Example:
+     ```
+     Scenario 1: Filter where Type = "1"
+     Scenario 2: Filter where Type = "2"
+     etc.
+     ```
+
+### Step 4: Program Setup
+1. Copy the configuration template:
+   ```
+   # On Windows
+   copy config.json.example config.json
+
+   # On Mac/Linux
+   cp config.json.example config.json
+   ```
+
+2. Edit config.json with your details:
+   ```json
+   {
+     "openai_api_key": "your-openai-api-key-from-step-1",
+     "google_sheets_id": "your-sheet-id-from-step-2",
+     "google_sheets_credentials_file": "fotogenie-ai-credentials.json"
+   }
+   ```
+
+## Using the Program
+
+1. Start the program:
+   ```bash
+   # Start backend
+   python backend/app.py
+
+   # In new window, start frontend
+   npm run dev
+   ```
+
+2. Open in browser: http://localhost:5173 or 5174
+
+3. Add tweets two ways:
+   - **From Screenshots**: 
+     - Click "Instructions" box
+     - Press Ctrl+V to paste screenshot
+   
+   - **Type Manually**:
+     - Enter tweets in text box
+
+4. Click "Schedule Tweets"
+
+The program will:
+- Process your input
+- Create tweet variations
+- Add them to Google Sheets
+- Make.com will post them automatically
+
+## Sheet Structure
+The program creates this structure automatically:
 ```
 | Type | Content | Characters | Image | Video | Status | Date | Time |
 |------|---------|------------|--------|-------|--------|------|------|
 | 1    | Tweet 1 | 240        | URL1   | -     | Ready  | 2/16 | 9:00 |
-| 2    | Tweet 2 | 180        | URL2   | -     | Ready  | 2/16 | 9:30 |
 ```
 
-## Setting Up Make.com Automation 🔄
-![Make.com Automation Setup](./images/make-automation.png)
+## Troubleshooting
 
+If you get errors:
+1. Check all API keys are correct
+2. Ensure Google Sheet is shared correctly
+3. Verify Make.com scenarios are running
+4. Check your internet connection
 
-### Step 1: Google Sheets Trigger
-![Google Sheets Setup](./images/google-sheets-setup.jpg)
+## Security Note ⚠️
+Never share your:
+- config.json file
+- API keys
+- Credentials file
 
-1. Add "Google Sheets" trigger
-2. Select your spreadsheet
-3. Set it to watch for new rows
-4. Choose your sheet name
-5. Set Table contains headers = Yes
-6. Set Column range = A-H (Type through Time)
-
-### Step 2: Twitter/X Posting
-![Twitter Posting Setup](./images/twitter-posting.jpg)
-
-For each scenario (1, 2, 3, etc.):
-1. Add "Create a Tweet" action
-2. Connect your Twitter/X account
-3. Set up the mapping:
-   - Text = Content column
-   - Media = Image column (if exists)
-   - Video = Video column (if exists)
-
-### Important: Multiple Scenarios 📝
-
-You need separate scenarios for each type:
-
-**Scenario 1:**
-```
-Filter: Where Type equals "1"
-Tweet using: Content 1, Image 1, Video 1
-```
-
-**Scenario 2:**
-```
-Filter: Where Type equals "2"
-Tweet using: Content 2, Image 2, Video 2
-```
-
-And so on...
-
-## Using the Tweet Scheduler 🐦
-
-1. Start the program:
-   ```bash
-   # First, start the backend
-   python backend/app.py
-
-   # Then, in another window, start the frontend
-   npm run dev
-   ```
-
-2. Open your web browser and go to: http://localhost:5173 or 5174
-
-3. Add content in two ways:
-   - **Paste Images**: 
-     - Click in the "Instructions" box
-     - Press Ctrl+V to paste screenshot
-     - AI will extract text and create variations
-   
-   - **Type Directly**:
-     - Enter tweets in the text box
-     - AI will process and format them
-
-4. The program will automatically:
-   - Extract text from images
-   - Generate tweet variations
-   - Format everything properly
-   - Add to your Google Sheet with:
-     - Type (1, 2, 3, etc.)
-     - Content (the tweet text)
-     - Character count
-     - Image URLs (if any)
-     - Video URLs (if any)
-     - Status (Ready)
-     - Date and Time
-
-5. Make.com will then:
-   - Watch for new rows
-   - Filter by Type
-   - Post at scheduled times
-   - Update Status
-
-## Example Flow 🌊
-
-1. You paste a tweet screenshot
-2. AI extracts: "Just learned coding! What should I learn next?"
-3. Gets saved to sheet as:
-   ```
-   Type 1 | "Just learned coding! What should I learn next?" | 45 | - | - | Ready | 2/16 | 10:00
-   ```
-4. Make.com sees new row
-5. Matches Type = 1 scenario
-6. Posts to Twitter/X
-7. Updates Status to "Posted"
-
-## Need Help? 🆘
-
-If something goes wrong, check:
-1. Google Sheet structure matches exactly
-2. Make.com scenarios are filtering correctly
-3. All connections are active
-4. API keys are valid
-
-## Stay Safe! 🔒
-
-Remember:
-- Keep your API keys private
-- Double-check tweet content
-- Monitor your automation
-
-Have fun scheduling your tweets! 🎉
+Need help? Open an issue on GitHub!
