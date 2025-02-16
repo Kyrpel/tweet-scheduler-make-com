@@ -1,6 +1,41 @@
 # Tweet Scheduler with Make.com Automation 🚀
 
-A tool that helps you automatically schedule and post tweets. It can read tweet screenshots or text input, create variations, and post them automatically using Make.com.
+A tool that helps you automatically schedule and post tweets. It can read screenshots or text input, create variations, and post them automatically using Make.com.
+
+## Make.com Automation Overview
+![Make.com Automation Overview](./images/make-automation.jpg)
+![Make.com Automation Detail](./images/make-automation2.jpg)
+
+## The Problem 🤔
+Creating and scheduling tweets can be challenging, especially when you want to:
+1. Extract content from tweet screenshots
+2. Generate tweet variations
+3. Schedule them automatically
+4. Maintain a consistent posting schedule
+
+While Make.com offers great automation for posting tweets, it doesn't help with content creation and management. Similarly, while Google Sheets is perfect for organizing content, it doesn't connect directly to tweet creation.
+
+## The Solution 💡
+This tool solves these problems by combining:
+1. **AI-Powered Content Generation**:
+   - Extract text from screenshots
+   - Generate variations of existing tweets
+   - Create new tweets from your input
+
+2. **Google Sheets Organization**:
+   - Structured storage of tweets
+   - Automatic scheduling setup
+   - Content management system
+
+3. **Make.com Automation**:
+   - Automatic posting to Twitter/X
+   - Multiple posting schedules
+   - Different content types per scenario
+
+This combination creates a powerful workflow:
+```
+Screenshot/Text → AI Processing → Google Sheets → Make.com → Twitter
+```
 
 ## Setup Guide
 
