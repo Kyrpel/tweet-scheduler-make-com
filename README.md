@@ -99,9 +99,39 @@ Screenshot/Text → AI Processing → Google Sheets → Make.com → Twitter
      etc.
      ```
 
-### Step 4: Program Setup
-1. Copy the configuration template:
+### Step 4: Environment Setup
+1. Install Conda if you haven't already:
+   - Download [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
+   - Follow installation instructions for your system
+
+2. Create and activate the environment:
+   ```bash
+   # Create environment
+   conda env create -f environment.yml
+
+   # Activate environment
+   conda activate tweet_scheduler
    ```
+
+3. Run the setup script:
+   ```bash
+   python setup.py
+   ```
+
+4. Verify Playwright installation:
+   ```bash
+   python -c "from playwright.sync_api import sync_playwright; sync_playwright().start()"
+   ```
+
+If you get any browser errors, you can manually install them:
+```bash
+playwright install
+playwright install-deps
+```
+
+### Step 5: Program Setup
+1. Rename the configuration template:
+   ```bash
    # On Windows
    copy config.json.example config.json
 
@@ -114,24 +144,38 @@ Screenshot/Text → AI Processing → Google Sheets → Make.com → Twitter
    {
      "openai_api_key": "your-openai-api-key-from-step-1",
      "google_sheets_id": "your-sheet-id-from-step-2",
-     "google_sheets_credentials_file": "fotogenie-ai-credentials.json"
+     "google_sheets_credentials_file": "your-google-project-credentials.json"
    }
+   ```
+
+3. Install frontend dependencies:
+   ```bash
+   # Install Node.js dependencies
+   npm install
    ```
 
 ## Using the Program
 
-1. Start the program:
+1. Make sure your environment is activated:
    ```bash
-   # Start backend
+   # On Windows
+   conda activate tweet_scheduler
+   # On Mac/Linux
+   source activate tweet_scheduler
+   ```
+
+2. Start the services:
+   ```bash
+   # Start backend (in the activated environment)
    python backend/app.py
 
    # In new window, start frontend
    npm run dev
    ```
 
-2. Open in browser: http://localhost:5173 or 5174
+3. Open in browser: http://localhost:5173 or 5174
 
-3. Add tweets two ways:
+4. Add tweets two ways:
    - **From Screenshots**: 
      - Click "Instructions" box
      - Press Ctrl+V to paste screenshot
@@ -139,7 +183,7 @@ Screenshot/Text → AI Processing → Google Sheets → Make.com → Twitter
    - **Type Manually**:
      - Enter tweets in text box
 
-4. Click "Schedule Tweets"
+5. Click "Schedule Tweets"
 
 The program will:
 - Process your input

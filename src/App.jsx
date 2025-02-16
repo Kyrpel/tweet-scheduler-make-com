@@ -11,6 +11,7 @@ function App() {
     tweetImages: [],
     imageInstructions: '',
     pastedImages: [],
+    articleUrl: '',
   })
   const [loading, setLoading] = useState(false)
   const [processingStep, setProcessingStep] = useState('')
@@ -115,9 +116,48 @@ function App() {
     }));
   };
 
+  const processArticleUrl = async (url) => {
+    try {
+        setError(null);  // Clear any previous errors
+        setLoading(true);
+        setProcessingStep('Processing article...');
+        
+        const response = await fetch('http://localhost:3000/api/process-article', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url }),
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to process article');
+        }
+        
+        if (data.tweet) {
+            setFormData(prev => ({
+                ...prev,
+                tweets: prev.tweets ? `${prev.tweets}\n\n${data.tweet}` : data.tweet,
+                articleUrl: ''  // Clear the URL input after success
+            }));
+        }
+    } catch (error) {
+        setError(error.message);
+    } finally {
+        setLoading(false);
+        setProcessingStep('');
+    }
+  };
+
   return (
     <div className="container">
-      <h1>Tweet Scheduler</h1>
+      <div className="title-container">
+        <h1 className="title">
+          {/* <span className="title-emoji">🚀 📱 ✨</span> */}
+          Tweet Creation & Scheduler with Make.com        </h1>
+      </div>
       {error && (
         <div className="error-message">
           Error: {error}
@@ -130,6 +170,30 @@ function App() {
           <h2>Tweets</h2>
           
           <div className="form-group">
+            <label htmlFor="articleUrl">Article URL</label>
+            <div className="url-input-container">
+              <input
+                type="url"
+                id="articleUrl"
+                value={formData.articleUrl}
+                onChange={(e) => setFormData(prev => ({ ...prev, articleUrl: e.target.value }))}
+                placeholder="Enter article URL to generate tweet..."
+              />
+              <button 
+                type="button"
+                onClick={() => processArticleUrl(formData.articleUrl)}
+                disabled={!formData.articleUrl}
+              >
+                Process Article
+              </button>
+            </div>
+          </div>
+
+          <div className="divider">
+            <span className="divider-text">AND / OR</span>
+          </div>
+
+          <div className="form-group">
             <label htmlFor="imageInstructions">Instructions for Image Processing</label>
             <textarea
               id="imageInstructions"
@@ -138,7 +202,7 @@ function App() {
                 ...prev, 
                 imageInstructions: e.target.value 
               }))}
-              placeholder="Enter instructions for processing tweet images (optional)"
+              placeholder="Paste multiple images (optional)"
               rows="3"
               onPaste={handlePaste}
               onKeyPress={handleKeyPress}
@@ -162,13 +226,16 @@ function App() {
             )}
           </div>
 
+          <div className="divider">
+            <span className="divider-text">AND / OR</span>
+          </div>
+
           <div className="form-group">
-            <label htmlFor="tweets">Enter or Edit Tweets</label>
+            <label htmlFor="tweets">Enter Tweets</label>
             <textarea
               id="tweets"
               value={formData.tweets}
               onChange={(e) => setFormData(prev => ({ ...prev, tweets: e.target.value }))}
-              required
               rows="10"
               placeholder="Enter your tweets here, one per line, or paste images above..."
             />
@@ -182,7 +249,7 @@ function App() {
               <span>{processingStep || 'Processing...'}</span>
             </div>
           ) : (
-            'Schedule Tweets'
+            'Sent Tweets to Google Sheets'
           )}
         </button>
 

@@ -11,6 +11,7 @@ sys.path.append(str(Path(__file__).parent))
 
 from GPT4_make_scheduler import split_tweets_with_gpt4, GoogleSheetsManager, add_tweets_to_sheet
 from vision_processor import VisionProcessor
+from article_processor import ArticleProcessor
 
 app = Flask(__name__)
 CORS(app)
@@ -88,6 +89,27 @@ def schedule_tweets():
 
     except Exception as e:
         logger.error(f"Error details: {traceback.format_exc()}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/process-article', methods=['POST'])
+def process_article():
+    try:
+        data = request.json
+        url = data.get('url')
+        
+        if not url:
+            return jsonify({'error': 'No URL provided'}), 400
+
+        processor = ArticleProcessor()
+        tweet = processor.process_url_sync(url)  # Use sync version
+        
+        if not tweet:
+            return jsonify({'error': 'Failed to process article'}), 400
+
+        return jsonify({'tweet': tweet})
+
+    except Exception as e:
+        logger.error(f"Error processing article: {traceback.format_exc()}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

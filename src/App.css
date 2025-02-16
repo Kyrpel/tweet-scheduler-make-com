@@ -41,7 +41,7 @@ h2 {
 
 /* Form Groups */
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
   position: relative;
 }
 
@@ -435,4 +435,104 @@ button:disabled {
 /* Make sure the textarea has enough padding to not overlap with thumbnails */
 #imageInstructions {
   padding-bottom: 60px;
+}
+
+/* Fancy Title */
+.title-container {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 1rem;
+}
+
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #00acee, #1DA1F2, #0084b4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 0;
+}
+
+.title-emoji {
+  font-size: 2.5rem;
+  margin-right: 0.5rem;
+}
+
+/* Divider styles */
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.divider-text {
+  background-color: #f8f9fa;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  display: inline-block;
+  font-weight: 600;
+  color: #64748b;
+  font-size: 0.9rem;
+  position: relative;
+  z-index: 1;
+  border: 1px solid #e2e8f0;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #e2e8f0;
+  z-index: 0;
+}
+
+/* Add more spacing around textareas */
+.form-group {
+  margin-bottom: 2.5rem;
+}
+
+.tweets-section {
+  padding: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* URL input styles */
+.url-input-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.url-input-container input[type="url"] {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.url-input-container button {
+  padding: 0.75rem 1.5rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.url-input-container button:hover {
+  background-color: #2980b9;
+}
+
+.url-input-container button:disabled {
+  background-color: #cbd5e0;
+  cursor: not-allowed;
 }

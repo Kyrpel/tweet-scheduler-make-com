@@ -8,6 +8,7 @@ dependencies:
   - tesseract
   - pytesseract
   - pillow
+  - nodejs>=18
   - pip:
     - flask==3.0.0
     - werkzeug==3.0.1
@@ -22,3 +23,18 @@ dependencies:
     - cryptography==41.0.7
     - pytesseract==0.3.10
     - python-multipart==0.0.6
+    - crawl4ai>=0.4.3b
+    - playwright==1.41.1
+    - asyncio==3.4.3
+    - aiohttp==3.9.1
+    - beautifulsoup4==4.12.2
+    - markdown==3.5.1
+    - nest-asyncio==1.5.8
+    - playwright-core==1.41.1
+variables:
+  PLAYWRIGHT_BROWSERS_PATH: $PREFIX/browsers
+
+# Post-installation commands
+post_install: |
+  playwright install chromium
+  playwright install-deps chromium

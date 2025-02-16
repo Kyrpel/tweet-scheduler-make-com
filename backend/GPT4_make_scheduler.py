@@ -3,7 +3,7 @@ from openai import OpenAI
 from typing import List, Tuple, Optional
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import os
 
@@ -133,19 +133,28 @@ class GoogleSheetsManager:
             body=body
         ).execute()
 
+def get_current_date_and_day():
+    """Get current date formatted as DD/MM/YYYY and day name."""
+    current = datetime.now()
+    return current.strftime("%d/%m/%Y"), current.strftime("%A")
+
 def add_tweets_to_sheet(
     sheets_manager: GoogleSheetsManager,
     tweets: List[str],
-    start_date: str = "15/02/2025",
-    start_day: str = "Saturday"
+    start_date: Optional[str] = None,
+    start_day: Optional[str] = None
 ):
-    """Adds tweets to the Google Sheet sequentially."""
+    """Adds tweets to the Google Sheet sequentially starting from current date."""
     last_date, last_day, current_row, start_column = sheets_manager.get_last_entry_info()
+    
+    # If no last entry and no start date provided, use current date
+    if not last_date and not start_date:
+        start_date, start_day = get_current_date_and_day()
     
     date = last_date if last_date else start_date
     day = last_day if last_day else start_day
     
-    print(f"Continuing from date: {date}, day: {day}, column: {start_column + 1}")
+    print(f"Starting from date: {date}, day: {day}, column: {start_column + 1}")
     
     tweet_index = 0
     column_index = start_column
@@ -174,34 +183,14 @@ def add_tweets_to_sheet(
         # Update the sheet
         sheets_manager.update_sheet(current_row, row + content_data)
         
-        if column_index == 5:
-            # Reset for next row
-            column_index = 0
+        # Move to next row if needed
+        if tweet_index < len(tweets):
             current_row += 1
-            
-            # Update date and day
-            day_index = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].index(day)
-            day = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][(day_index + 1) % 7]
-            
-            # Update date
-            date_parts = date.split("/")
-            day_number = int(date_parts[0])
-            month = int(date_parts[1])
-            year = int(date_parts[2])
-            
-            days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-            if year % 4 == 0 and (year % 100 != 0 or year % 400 == 0):
-                days_in_month[1] = 29
-            
-            day_number += 1
-            if day_number > days_in_month[month - 1]:
-                day_number = 1
-                month += 1
-                if month > 12:
-                    month = 1
-                    year += 1
-            
-            date = f"{day_number:02d}/{month:02d}/{year:04d}"
+            column_index = 0
+            # Calculate next date and day
+            next_date = datetime.strptime(date, "%d/%m/%Y") + timedelta(days=1)
+            date = next_date.strftime("%d/%m/%Y")
+            day = next_date.strftime("%A")
 
 if __name__ == "__main__":
     CREDENTIALS_FILE = os.getenv('GOOGLE_SHEETS_CREDENTIALS_FILE')
