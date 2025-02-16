@@ -1,0 +1,24 @@
+name: tweet-scheduler
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - tesseract
+  - pytesseract
+  - pillow
+  - pip:
+    - flask==3.0.0
+    - werkzeug==3.0.1
+    - flask-cors==4.0.0
+    - python-dotenv==1.0.0
+    - openai==1.6.1
+    - httpx>=0.24.1
+    - google-auth==2.23.4
+    - google-api-python-client==2.108.0
+    - google-auth-httplib2==0.1.1
+    - google-auth-oauthlib==1.1.0
+    - cryptography==41.0.7
+    - pytesseract==0.3.10
+    - python-multipart==0.0.6

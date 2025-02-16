@@ -1,0 +1,5 @@
+{
+  "openai_api_key": "your-openai-api-key-here",
+  "google_sheets_id": "your-google-sheets-id-here",
+  "google_sheets_credentials_file": "your-credentials-file.json"
+} 

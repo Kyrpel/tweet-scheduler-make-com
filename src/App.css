@@ -1,0 +1,438 @@
+/* Main Container */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Headers */
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+h2 {
+  color: #34495e;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Sections */
+.credentials-section,
+.tweets-section {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.credentials-section:hover,
+.tweets-section:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="password"],
+textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  color: #2c3e50;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* File Input */
+.file-input-container {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+input[type="file"] {
+  width: 100%;
+  padding: 1rem;
+  border: 2px dashed #cbd5e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+input[type="file"]:hover {
+  border-color: #3498db;
+  background-color: rgba(52, 152, 219, 0.05);
+}
+
+/* Textarea */
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+textarea.tweet-input {
+  min-height: 200px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Checkbox */
+.form-group.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-group.checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.form-group.checkbox label {
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Buttons */
+button {
+  background-color: #3498db;
+  color: white;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+button:hover:not(:disabled) {
+  background-color: #2980b9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.clear-credentials-btn {
+  background-color: #e74c3c;
+  padding: 0.5rem 1rem;
+  width: auto;
+  text-transform: none;
+  font-size: 0.9rem;
+}
+
+.clear-credentials-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Messages */
+.error-message {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #fecaca;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.saved-credentials-info {
+  background-color: #e3f2fd;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #90caf9;
+}
+
+/* Help Text */
+.help-text {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
+/* Loading State */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Image Preview */
+.image-preview {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .credentials-section,
+  .tweets-section {
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .saved-credentials-info {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .clear-credentials-btn {
+    width: 100%;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container > * {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background-color: #1a1a1a;
+  }
+
+  .credentials-section,
+  .tweets-section {
+    background-color: #2d2d2d;
+  }
+
+  h1, h2, label {
+    color: #e2e8f0;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  textarea {
+    background-color: #333;
+    color: #e2e8f0;
+    border-color: #4a5568;
+  }
+
+  .help-text {
+    color: #a0aec0;
+  }
+
+  .saved-credentials-info {
+    background-color: #2c5282;
+    border-color: #4299e1;
+    color: #e2e8f0;
+  }
+
+  .error-message {
+    background-color: #742a2a;
+    border-color: #9b2c2c;
+    color: #feb2b2;
+  }
+}
+
+.paste-area {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.paste-area:hover {
+  border-color: #888;
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.processing-status {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.status-message {
+  margin-bottom: 10px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.progress-bar {
+  height: 4px;
+  background-color: #e9ecef;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 30%;
+  background-color: #3498db;
+  animation: progress 1.5s ease-in-out infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes progress {
+  0% { left: -30%; }
+  100% { left: 100%; }
+}
+
+.button:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.button:disabled .loading-container {
+  opacity: 0.8;
+}
+
+.image-thumbnails {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.thumbnail-container {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin: 2px;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.remove-image {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 14px;
+  height: 14px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid #fff;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.remove-image:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+  transform: scale(1.05);
+}
+
+/* Make sure the textarea has enough padding to not overlap with thumbnails */
+#imageInstructions {
+  padding-bottom: 60px;
+}
