@@ -30,7 +30,7 @@ def split_tweets_with_gpt4(text: str) -> List[str]:
 4. Remove only unnecessary formatting, hashtags, and emojis
 5. Keep the original voice and style
 6. Do not use the name and date of the author in the tweets
-
+7. Do not add any labels or numbering (like "Tweet 1:", "Tweet 2:"), neither 1. 2. 3.
 Guidelines:
 - Make minimal changes - only adjust what's absolutely necessary
 - Keep the original message's exact meaning

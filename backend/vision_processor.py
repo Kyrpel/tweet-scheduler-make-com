@@ -30,11 +30,17 @@ class VisionProcessor:
                 3. Include all relevant text content
                 4. Maintain the original structure of the text
                 5. Exclude any UI elements or metadata
-                6. Separate different text blocks with line breaks
+                6. Do not add any labels or numbering (like "Tweet 1:", "Tweet 2:")
+                7. Separate different text blocks with line breaks
                 
                 Format your response as plain text only.
                 Do not add any explanations or formatting.
                 Just return the extracted text content.
+
+                
+Tweet 2: "Scare a programmer with only one word. Go!"
+should be : 
+"Scare a programmer with only one word. Go!"
                 """
 
             # Prepare image content list

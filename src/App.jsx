@@ -256,7 +256,7 @@ function App() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="tweets">Enter Tweets</label>
+              <label htmlFor="tweets">Edit or Enter Tweets</label>
               <textarea
                 id="tweets"
                 value={formData.tweets}
@@ -290,7 +290,7 @@ function App() {
         </div>
 
         <div className="content-section hooks-section">
-          <h2>Viral Hooks</h2>
+          <h2>Viral Hooks Inspiration</h2>
           <ViralHooks />
         </div>
       </div>
