@@ -6,6 +6,8 @@ import traceback
 import json
 import sys  
 import logging
+from hooks_config import VIRAL_HOOKS
+from werkzeug.urls import quote as url_quote
 
 sys.path.append(str(Path(__file__).parent))
 
@@ -32,6 +34,73 @@ logger = logging.getLogger(__name__)
 
 @app.route('/api/schedule', methods=['POST'])
 def schedule_tweets():
+    """Schedule processed tweets to Google Sheets."""
+    try:
+        data = request.json
+        tweets = data.get('tweets', '').split('\n\n')
+        
+        if not tweets:
+            return jsonify({'error': 'No tweets provided'}), 400
+
+        logger.debug("Saving to Google Sheets...")
+        # Use stored credentials
+        openai_key = config.get('openai_api_key')
+        sheets_id = config.get('google_sheets_id')
+        
+        if not credentials_path.exists():
+            return jsonify({'error': f'Google credentials file not found at {credentials_path}'}, 400)
+
+        # Initialize Google Sheets manager
+        sheets_manager = GoogleSheetsManager(str(credentials_path), sheets_id)
+        
+        # Create header if needed
+        sheets_manager.create_header()
+        
+        # Add tweets to sheet
+        add_tweets_to_sheet(sheets_manager, tweets)
+
+        return jsonify({'message': 'Tweets scheduled successfully'})
+
+    except Exception as e:
+        logger.error(f"Error details: {traceback.format_exc()}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/process-article', methods=['POST'])
+def process_article():
+    try:
+        data = request.json
+        url = data.get('url')
+        
+        if not url:
+            return jsonify({'error': 'No URL provided'}), 400
+
+        processor = ArticleProcessor()
+        content = processor.process_url_sync(url)
+        
+        if not content:
+            return jsonify({'error': 'Failed to process article'}), 400
+
+        return jsonify({'tweet': content})
+
+    except Exception as e:
+        logger.error(f"Error processing article: {traceback.format_exc()}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/hooks', methods=['GET'])
+def get_hooks():
+    """API endpoint to get viral hooks."""
+    return jsonify(VIRAL_HOOKS)
+
+@app.route('/api/hooks/<category>', methods=['GET'])
+def get_category_hooks(category):
+    """API endpoint to get hooks by category."""
+    if category in VIRAL_HOOKS:
+        return jsonify(VIRAL_HOOKS[category])
+    return jsonify({"error": "Category not found"}), 404
+
+@app.route('/api/process-tweets', methods=['POST'])
+def process_tweets():
+    """Process tweets without scheduling them."""
     try:
         logger.debug("Starting tweet processing")
         all_tweets = []
@@ -65,51 +134,12 @@ def schedule_tweets():
         if not all_tweets:
             return jsonify({'error': 'No tweets were generated from either images or text'}), 400
 
-        logger.debug("Saving to Google Sheets...")
-        # Use stored credentials
-        openai_key = config.get('openai_api_key')
-        sheets_id = config.get('google_sheets_id')
-        
-        if not credentials_path.exists():
-            return jsonify({'error': f'Google credentials file not found at {credentials_path}'}, 400)
-
-        # Set OpenAI API key in environment
-        os.environ['OPENAI_API_KEY'] = openai_key
-
-        # Initialize Google Sheets manager
-        sheets_manager = GoogleSheetsManager(str(credentials_path), sheets_id)
-        
-        # Create header if needed
-        sheets_manager.create_header()
-        
-        # Add tweets to sheet
-        add_tweets_to_sheet(sheets_manager, all_tweets)
-
-        return jsonify({'message': 'Tweets scheduled successfully'})
+        # Return processed tweets as a string
+        processed_tweets = "\n\n".join(all_tweets)
+        return jsonify({'processedTweets': processed_tweets})
 
     except Exception as e:
         logger.error(f"Error details: {traceback.format_exc()}")
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/process-article', methods=['POST'])
-def process_article():
-    try:
-        data = request.json
-        url = data.get('url')
-        
-        if not url:
-            return jsonify({'error': 'No URL provided'}), 400
-
-        processor = ArticleProcessor()
-        tweet = processor.process_url_sync(url)  # Use sync version
-        
-        if not tweet:
-            return jsonify({'error': 'Failed to process article'}), 400
-
-        return jsonify({'tweet': tweet})
-
-    except Exception as e:
-        logger.error(f"Error processing article: {traceback.format_exc()}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

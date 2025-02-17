@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync-hooks": "python scripts/sync_hooks.py",
+    "prestart": "npm run sync-hooks",
+    "prebuild": "npm run sync-hooks"
   },
   "dependencies": {
     "react": "^18.2.0",

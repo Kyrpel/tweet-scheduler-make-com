@@ -6,12 +6,13 @@ from googleapiclient.discovery import build
 from datetime import datetime, timedelta
 import json
 import os
+from hooks_config import VIRAL_HOOKS
+import random
 
 def split_tweets_with_gpt4(text: str) -> List[str]:
     """Splits a string of tweets using the OpenAI GPT-4 API."""
     try:
-        # Initialize the client with just the API key
-        client = OpenAI()  # It will automatically use the OPENAI_API_KEY environment variable
+        client = OpenAI()
         
         # Normalize the input text
         text = text.replace('"', '"').replace('"', '"').replace("'", "'").replace('–', '-')
@@ -21,25 +22,39 @@ def split_tweets_with_gpt4(text: str) -> List[str]:
             messages=[
                 {
                     "role": "system",
-                    "content": """You are a helpful assistant that processes tweets. For each tweet you should:
-1. Remove any numbering at the start
-2. Remove any quotes at the start or end
-3. Remove all hashtags (e.g., #Motivation)
-4. Remove all emojis
-5. Preserve the actual message content
-6. Preserve line breaks within tweets (when text is structured in multiple lines)
-7. Remove any extra whitespace at start/end of lines
-8. Convert smart quotes and apostrophes to regular ones
-9. Be smart enought and idenify when start a new tweet, when not.
+                    "content": """You are an expert at natural tweet processing. Your task is to:
+
+1. Keep the original message almost exactly as is
+2. Make only minimal, natural adjustments for readability
+3. Split long content into separate tweets if needed
+4. Remove only unnecessary formatting, hashtags, and emojis
+5. Keep the original voice and style
+6. Do not use the name and date of the author in the tweets
+
+Guidelines:
+- Make minimal changes - only adjust what's absolutely necessary
+- Keep the original message's exact meaning
+- Only paraphrase if needed for clarity
+- Maintain the author's voice and tone
+- Remove only technical formatting (hashtags, emojis)
+- Split naturally at sentence boundaries if needed
+- Add hooks or creative elements if applicable
+- Keep it human and authentic
+
+Example of appropriate changes:
+Original: "10 AMAZING!!! tips for #coding 🚀 (MUST READ) ..."
+Becomes: "10 amazing tips for coding that you must read ..."
 """
                 },
                 {
                     "role": "user",
-                    "content": f"Please process the following text into individual tweets, applying the cleaning rules for each tweet. Preserve line breaks within tweets when they exist:\n\n{text}\n\nReturn only the cleaned tweets, with a blank line between each tweet."
+                    "content": f"Process these tweets with minimal changes, keeping them as close to the original as possible:\n\n{text}"
                 }
-            ]
+            ],
+            temperature=0.3  # Lower temperature for more conservative output
         )
-
+        
+        # Process response
         if response.choices:
             content = response.choices[0].message.content.strip()
             tweets = []

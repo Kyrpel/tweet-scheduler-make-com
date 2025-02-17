@@ -1,65 +1,76 @@
 import asyncio
 from crawl4ai import AsyncWebCrawler
 from typing import Optional
-from openai import OpenAI
 import nest_asyncio
-from bs4 import BeautifulSoup
 import re
+from openai import OpenAI
+import os
+import random
+from hooks_config import VIRAL_HOOKS
 
 # Enable nested event loops
 nest_asyncio.apply()
 
 class ArticleProcessor:
     def __init__(self):
-        self.client = OpenAI()
-
-    def process_url_sync(self, url: str) -> Optional[str]:
-        """Synchronous wrapper for process_url."""
-        return asyncio.run(self.process_url(url))
-
-    def extract_summary(self, markdown_text: str, max_length: int = 200) -> str:
-        """Extract a summary from markdown text."""
-        # Remove markdown formatting
-        clean_text = re.sub(r'[#*`_~\[\]\(\)]', '', markdown_text)
-        # Remove multiple spaces and newlines
-        clean_text = re.sub(r'\s+', ' ', clean_text).strip()
-        
-        # Get first paragraph or sentence that makes sense
-        sentences = clean_text.split('.')
-        summary = ''
-        
-        for sentence in sentences:
-            if len(sentence.strip()) > 50:  # Only use substantial sentences
-                summary = sentence.strip()
-                break
-        
-        if not summary and sentences:
-            summary = sentences[0].strip()
-            
-        return f"{summary[:max_length]}..." if len(summary) > max_length else summary
+        self.client = OpenAI()  # Will use OPENAI_API_KEY from environment
 
     async def process_url(self, url: str) -> Optional[str]:
         """Process an article URL and return a tweet-worthy summary."""
         try:
-            # Crawl the article
+            # Crawl the article with basic configuration
             async with AsyncWebCrawler() as crawler:
                 result = await crawler.arun(
                     url=url,
                     max_pages=1,
                     markdown=True,
-                    timeout=30
+                    timeout=30,
+                    extract_content=True
                 )
 
             if not result or not result.markdown:
                 raise Exception("No content extracted from URL")
 
-            # Extract summary from the markdown content
-            summary = self.extract_summary(result.markdown)
-
-            # Create tweet from the extracted summary
-            tweet = f"{summary[:200]}... {url}"
+            # Clean up the content
+            content = result.markdown
+            content = re.sub(r'http\S+', '', content)
+            content = re.sub(r'[#*`_~\[\]\(\)\{\}]', '', content)
+            content = re.sub(r'\n\s*\n', '\n\n', content)
+            content = re.sub(r'\s+', ' ', content)
             
-            # Ensure tweet is within limits
+            # Get first few paragraphs
+            paragraphs = content.split('\n\n')
+            main_content = '\n\n'.join(paragraphs[:3])
+
+            # Create tweet using GPT-4
+            response = self.client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": """Create a single engaging tweet from the article content. The tweet should:
+1. Be under 280 characters
+2. Be written in a natural, human voice
+3. Include the most interesting point
+4. Be engaging but professional
+5. End with the article URL
+6. Use some engaging hook/words at the begining
+Do not use hashtags or emojis."""
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Article content:\n{main_content}\n\nURL: {url}\n\nCreate a single tweet that would make people want to read this article."
+                    }
+                ],
+                max_tokens=100,
+                temperature=0.7
+            )
+
+            tweet = response.choices[0].message.content.strip()
+            
+            # Ensure URL is at the end and tweet is within limits
+            if url not in tweet:
+                tweet = f"{tweet[:200]}... {url}"
             if len(tweet) > 280:
                 tweet = f"{tweet[:277]}..."
 
@@ -69,34 +80,59 @@ class ArticleProcessor:
             print(f"Error processing article: {str(e)}")
             return None
 
-    def create_tweet_from_summary(self, summary: str, url: str) -> str:
-        """Create a tweet from the summary only if needed."""
+    def process_url_sync(self, url: str) -> Optional[str]:
+        """Synchronous wrapper for process_url."""
+        return asyncio.run(self.process_url(url))
+
+    def get_viral_hook(self, content: str) -> str:
+        """Select appropriate viral hook based on content."""
         try:
+            # Analyze content to select best hook type
             response = self.client.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     {
                         "role": "system",
-                        "content": """Create a concise, engaging tweet from the summary. The tweet should:
-1. Be under 280 characters
-2. Include key information
-3. Be engaging and shareable
-4. Not use hashtags or emojis
-5. Maintain a professional tone
-6. Include the article URL at the end"""
+                        "content": """Analyze the article content and select the most appropriate viral hook type:
+1. Question Hook (for how-to/educational content)
+2. Challenge Hook (for myth-busting/contrarian views)
+3. Story Hook (for case studies/experiences)
+4. Authority Hook (for expert insights/research)
+5. Stats Hook (for data-driven content)
+Choose the most engaging format based on content."""
                     },
                     {
                         "role": "user",
-                        "content": f"Summary:\n{summary}\n\nURL: {url}"
+                        "content": content
                     }
                 ],
-                max_tokens=100,
-                temperature=0.7
+                max_tokens=50
             )
-            return response.choices[0].message.content.strip()
+            
+            hook_type = response.choices[0].message.content.strip().lower()
+            # Get appropriate hook based on content analysis
+            hooks = VIRAL_HOOKS.get(hook_type, VIRAL_HOOKS["question"])["examples"]
+            
+            # Use GPT to select most relevant hook template
+            response = self.client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {
+                        "role": "system", 
+                        "content": "Select the most appropriate hook template that matches the article's content and message. Consider the key points, tone, and purpose of the article."
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Article content: {content}\n\nAvailable hook templates:\n" + "\n".join(hooks)
+                    }
+                ],
+                max_tokens=50
+            )
+            
+            selected_hook = response.choices[0].message.content.strip()
+            if selected_hook in hooks:
+                return selected_hook
+            return hooks[0]  # Fallback to first hook if no match found
         except Exception as e:
-            # Fallback to simple summary if OpenAI fails
-            tweet = f"{summary[:200]}... {url}"
-            if len(tweet) > 280:
-                tweet = f"{tweet[:277]}..."
-            return tweet 
+            print(f"Error generating hook: {str(e)}")
+            return "" 
