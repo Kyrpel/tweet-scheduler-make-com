@@ -7,7 +7,7 @@ A web application that helps create and schedule engaging tweets from various co
 - **Content Processing**
   - Process text input into tweet-friendly format
   - Extract text from images using GPT-4 Vision
-  - Process articles from URLs
+  - Process articles from URLs using crawl4ai
   - Maintain original message with minimal adjustments
 
 - **Viral Hooks Inspiration**
@@ -22,99 +22,45 @@ A web application that helps create and schedule engaging tweets from various co
 
 ## Setup
 
-### 1. Google Sheets Configuration
-
-1. Create a Google Cloud Project:
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project or select existing one
-   - Enable Google Sheets API for your project
-
-2. Create Service Account:
-   - Go to "IAM & Admin" > "Service Accounts"
-   - Click "Create Service Account"
-   - Fill in service account details
-   - Grant "Editor" role for Google Sheets
-
-3. Generate Credentials:
-   - Select your service account
-   - Go to "Keys" tab
-   - Click "Add Key" > "Create new key"
-   - Choose JSON format
-   - Save the downloaded file as `credentials.json`
-
-4. Create Google Sheet:
-   - Create a new Google Sheet
-   - Copy the Sheet ID from URL (the long string between /d/ and /edit)
-   - Share the sheet with service account email (found in credentials.json)
-
-### 2. Backend Setup
-
-1. Create virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Create `backend/requirements.yaml`:
-```yaml
-name: tweet-scheduler
-channels:
-  - defaults
-  - conda-forge
-dependencies:
-  - python=3.9
-  - pip
-  - pip:
-    - flask
-    - flask-cors
-    - openai
-    - google-auth
-    - google-auth-oauthlib
-    - google-auth-httplib2
-    - google-api-python-client
-    - python-dotenv
-    - crawl4ai
-    - nest-asyncio
-```
-
-4. Create conda environment from YAML:
-```bash
-conda env create -f backend/requirements.yaml
-conda activate tweet-scheduler
-```
-
-### 3. Frontend Setup
-
 1. Clone the repository:
 ```bash
 git clone [repository-url]
 cd tweet-scheduler
 ```
 
-2. Install dependencies:
-```bash
-# Frontend
-npm install
+2. Backend Setup (Choose A or B):
 
-# Backend
+**Option A: Using Conda (Recommended)**
+```bash
+# Create and activate conda environment from yml
+conda env create -f environment.yml
+conda activate tweet-scheduler
+```
+
+**Option B: Using Python venv**
+```bash
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Start the application:
+3. Frontend Setup:
 ```bash
-# Frontend
+# Install Node.js dependencies
+npm install
+```
+
+4. Start the Application:
+```bash
+# Terminal 1: Start Frontend
 npm run dev
 
-# Backend
+# Terminal 2: Start Backend
 python backend/app.py
 ```
 
-### 4. Configuration
+### Configuration
 
 Create `config.json` in project root:
 ```json
@@ -156,6 +102,7 @@ Create `config.json` in project root:
   - Flask
   - OpenAI GPT-4
   - Google Sheets API
+  - crawl4ai (for article extraction)
 
 ## Project Structure
 
