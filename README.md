@@ -78,18 +78,32 @@ Create `config.json` in project root:
    - Upload/paste images
    - Enter article URLs
 
+   ![Content Input](images/content_input.png)
+
 2. **Processing**
    - Click "Process Tweets" to generate tweet variations
    - Review and edit generated tweets in textarea
+
+   https://github.com/yourusername/tweet-scheduler/assets/images/video1.mp4
 
 3. **Scheduling**
    - Review processed tweets
    - Click "Send to Google Sheets" to schedule
 
+   ![Scheduling](images/scheduling.png)
+
 4. **Viral Hooks**
    - Browse hook categories for inspiration
    - Search for specific hooks
    - Copy hooks to use in tweets
+
+   ![Viral Hooks](images/viral_hooks.png)
+
+Watch the full demo:
+
+https://github.com/yourusername/tweet-scheduler/assets/images/video1.mp4
+
+> Note: If you're viewing this on GitHub, you can click the video to play it. If you're viewing locally, find the video at `images/video1.mp4`
 
 ## Tech Stack
 
