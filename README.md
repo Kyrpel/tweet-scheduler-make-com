@@ -78,7 +78,7 @@ Create `config.json` in project root:
    - Upload/paste images
    - Enter article URLs
 
-   ![Content Input](images/video1.mp4)
+   ![Content Input](images/video1.gif)
 
 2. **Processing**
    - Click "Process Tweets" to generate tweet variations
