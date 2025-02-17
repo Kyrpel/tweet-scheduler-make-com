@@ -22,6 +22,74 @@ A web application that helps create and schedule engaging tweets from various co
 
 ## Setup
 
+### 1. Google Sheets Configuration
+
+1. Create a Google Cloud Project:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select existing one
+   - Enable Google Sheets API for your project
+
+2. Create Service Account:
+   - Go to "IAM & Admin" > "Service Accounts"
+   - Click "Create Service Account"
+   - Fill in service account details
+   - Grant "Editor" role for Google Sheets
+
+3. Generate Credentials:
+   - Select your service account
+   - Go to "Keys" tab
+   - Click "Add Key" > "Create new key"
+   - Choose JSON format
+   - Save the downloaded file as `credentials.json`
+
+4. Create Google Sheet:
+   - Create a new Google Sheet
+   - Copy the Sheet ID from URL (the long string between /d/ and /edit)
+   - Share the sheet with service account email (found in credentials.json)
+
+### 2. Backend Setup
+
+1. Create virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+3. Create `backend/requirements.yaml`:
+```yaml
+name: tweet-scheduler
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+    - flask
+    - flask-cors
+    - openai
+    - google-auth
+    - google-auth-oauthlib
+    - google-auth-httplib2
+    - google-api-python-client
+    - python-dotenv
+    - crawl4ai
+    - nest-asyncio
+```
+
+4. Create conda environment from YAML:
+```bash
+conda env create -f backend/requirements.yaml
+conda activate tweet-scheduler
+```
+
+### 3. Frontend Setup
+
 1. Clone the repository:
 ```bash
 git clone [repository-url]
@@ -37,16 +105,6 @@ npm install
 pip install -r requirements.txt
 ```
 
-3. Configure environment:
-- Create `config.json` in project root:
-```json
-{
-  "openai_api_key": "your-openai-key",
-  "google_sheets_credentials_file": "path/to/credentials.json",
-  "google_sheets_id": "your-sheet-id"
-}
-```
-
 4. Start the application:
 ```bash
 # Frontend
@@ -54,6 +112,17 @@ npm run dev
 
 # Backend
 python backend/app.py
+```
+
+### 4. Configuration
+
+Create `config.json` in project root:
+```json
+{
+  "openai_api_key": "your-openai-key",
+  "google_sheets_credentials_file": "./credentials.json",
+  "google_sheets_id": "your-sheet-id-from-url"
+}
 ```
 
 ## Usage
