@@ -78,19 +78,19 @@ Create `config.json` in project root:
    - Upload/paste images
    - Enter article URLs
 
-   ![Content Input](images/content_input.png)
+   ![Content Input](images/video1.mp4)
 
 2. **Processing**
    - Click "Process Tweets" to generate tweet variations
    - Review and edit generated tweets in textarea
 
-   https://github.com/yourusername/tweet-scheduler/assets/images/video1.mp4
+   ![Tweet Processing](images/tweet_processing.png)
 
 3. **Scheduling**
    - Review processed tweets
    - Click "Send to Google Sheets" to schedule
 
-   ![Scheduling](images/scheduling.png)
+   ![Tweet Scheduling](images/scheduling.png)
 
 4. **Viral Hooks**
    - Browse hook categories for inspiration
@@ -99,11 +99,15 @@ Create `config.json` in project root:
 
    ![Viral Hooks](images/viral_hooks.png)
 
-Watch the full demo:
+### Demo Video
+Watch a quick demo of the application:
 
-https://github.com/yourusername/tweet-scheduler/assets/images/video1.mp4
+https://github.com/yourusername/tweet-scheduler/blob/main/images/video%201.mp4
 
-> Note: If you're viewing this on GitHub, you can click the video to play it. If you're viewing locally, find the video at `images/video1.mp4`
+<video width="100%" controls>
+  <source src="images/video 1.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## Tech Stack
 
