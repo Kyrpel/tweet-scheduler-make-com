@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import ViralHooks from './components/ViralHooks'
+import ProcessingSpinner from './components/ProcessingSpinner'
 
 function App() {
   const [formData, setFormData] = useState({
@@ -13,43 +14,13 @@ function App() {
     imageInstructions: '',
     pastedImages: [],
     articleUrl: '',
+    articleContent: '',
   })
   const [loading, setLoading] = useState(false)
   const [processingStep, setProcessingStep] = useState('')
   const [error, setError] = useState(null)
   const [savedCredentials, setSavedCredentials] = useState(null)
   const [activeTab, setActiveTab] = useState('tweets') // 'tweets' or 'hooks'
-  const [selectedModel, setSelectedModel] = useState('gpt4')
-  const [apiKeys, setApiKeys] = useState({
-    openai: '',
-    anthropic: '',
-    google: '',
-    groq: ''
-  })
-
-  // Add model options
-  const MODEL_OPTIONS = {
-    gpt4: {
-      name: 'GPT-4',
-      provider: 'openai',
-      cost: '$0.03/1K tokens'
-    },
-    claude: {
-      name: 'Claude 3',
-      provider: 'anthropic',
-      cost: '$0.025/1K tokens'
-    },
-    gemini: {
-      name: 'Gemini Pro',
-      provider: 'google',
-      cost: '$0.01/1K tokens'
-    },
-    groq: {
-      name: 'Groq LLM',
-      provider: 'groq',
-      cost: '$0.02/1K tokens'
-    }
-  }
 
   // ... [Previous useEffect and other handlers remain the same]
 
@@ -155,41 +126,41 @@ function App() {
     }));
   };
 
-  const processArticleUrl = async (url) => {
+  const handleArticleProcess = async () => {
+    setLoading(true);
     try {
-        setError(null);
-        setLoading(true);
-        setProcessingStep('Processing article...');
-        
-        const response = await fetch('http://localhost:3000/api/process-article', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ url }),
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.error || 'Failed to process article');
-        }
-        
-        if (data.tweet) {
-            // Add the article content to the tweets textarea
-            setFormData(prev => ({
-                ...prev,
-                tweets: prev.tweets 
-                    ? `${prev.tweets}\n\n${data.tweet}` 
-                    : data.tweet,
-                articleUrl: ''  // Clear the URL input after success
-            }));
-        }
+      setProcessingStep('Processing article...');
+      const response = await fetch('http://localhost:3000/api/process-article', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: formData.articleUrl,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to process article');
+      }
+
+      // Update both the article content and tweets textarea
+      setFormData(prev => ({
+        ...prev,
+        articleContent: result.articleContent,
+        tweets: prev.tweets 
+          ? `${prev.tweets}\n\n${result.tweet}` 
+          : result.tweet,
+        articleUrl: '', // Clear the URL input after success
+      }));
+
     } catch (error) {
-        setError(error.message);
+      console.error('Error:', error);
+      alert('Error processing article');
     } finally {
-        setLoading(false);
-        setProcessingStep('');
+      setLoading(false);
+      setProcessingStep('');
     }
   };
 
@@ -245,12 +216,23 @@ function App() {
                 />
                 <button 
                   type="button"
-                  onClick={() => processArticleUrl(formData.articleUrl)}
-                  disabled={!formData.articleUrl}
+                  onClick={handleArticleProcess}
+                  disabled={!formData.articleUrl || loading}
                 >
                   Process Article
                 </button>
               </div>
+              
+              {loading && processingStep === 'Processing article...' && (
+                <ProcessingSpinner />
+              )}
+
+              {formData.articleContent && (
+                <div className="article-content">
+                  <h3>Processed Article Content</h3>
+                  <p>{formData.articleContent}</p>
+                </div>
+              )}
             </div>
 
             <div className="form-group">
@@ -286,8 +268,15 @@ function App() {
               )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="tweets">Edit or Enter Tweets</label>
+            <button
+              className="process-tweets-btn"
+              onClick={handleSubmit}
+            >
+              Process Tweets
+            </button>
+
+            <div className="tweets-section">
+              <h2>Edit or Enter Tweets</h2>
               <textarea
                 id="tweets"
                 value={formData.tweets}
@@ -297,67 +286,7 @@ function App() {
               />
             </div>
 
-            <div className="form-group model-selection">
-              <label htmlFor="modelSelect">Select Model:</label>
-              <select 
-                id="modelSelect"
-                value={selectedModel}
-                onChange={(e) => setSelectedModel(e.target.value)}
-                className="model-dropdown"
-              >
-                {Object.entries(MODEL_OPTIONS).map(([key, model]) => (
-                  <option key={key} value={key}>
-                    {model.name} - {model.cost}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group api-keys">
-              <label>API Keys:</label>
-              <div className="api-key-inputs">
-                {Object.entries(MODEL_OPTIONS)
-                  .filter(([key, model]) => 
-                    model.provider === MODEL_OPTIONS[selectedModel].provider ||
-                    apiKeys[model.provider]
-                  )
-                  .map(([key, model]) => (
-                    <div key={key} className="api-key-input">
-                      <label htmlFor={`${model.provider}Key`}>
-                        {model.name} API Key:
-                      </label>
-                      <div className="key-input-container">
-                        <input
-                          type="password"
-                          id={`${model.provider}Key`}
-                          value={apiKeys[model.provider]}
-                          onChange={(e) => setApiKeys(prev => ({
-                            ...prev,
-                            [model.provider]: e.target.value
-                          }))}
-                          placeholder={`Enter ${model.name} API key`}
-                        />
-                        <span className="key-status">
-                          {apiKeys[model.provider] ? '✓ Set' : 'Not set'}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-
             <div className="button-group">
-              <button type="submit" disabled={loading}>
-                {loading ? (
-                  <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <span>{processingStep || 'Processing...'}</span>
-                  </div>
-                ) : (
-                  'Process Tweets'
-                )}
-              </button>
-
               <button 
                 type="button" 
                 onClick={handleScheduleTweets}

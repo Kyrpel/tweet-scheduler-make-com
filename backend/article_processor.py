@@ -42,24 +42,28 @@ class ArticleProcessor:
             paragraphs = content.split('\n\n')
             main_content = '\n\n'.join(paragraphs[:3])
 
+            # Calculate maximum length for tweet content to ensure room for URL
+            url_length = len(url)
+            max_tweet_length = 280 - url_length - 4  # 4 characters for space and ellipsis if needed
+
             # Create tweet using GPT-4
             response = self.client.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     {
                         "role": "system",
-                        "content": """Create a single engaging tweet from the article content. The tweet should:
-1. Be under 280 characters
+                        "content": f"""Create a single engaging tweet from the article content. The tweet should:
+1. Be under {max_tweet_length} characters (excluding URL)
 2. Be written in a natural, human voice
 3. Include the most interesting point
 4. Be engaging but professional
-5. End with the article URL
-6. Use some engaging hook/words at the begining
+5. Do not include the URL (it will be added automatically)
+6. Use some engaging hook/words at the beginning
 Do not use hashtags or emojis."""
                     },
                     {
                         "role": "user",
-                        "content": f"Article content:\n{main_content}\n\nURL: {url}\n\nCreate a single tweet that would make people want to read this article."
+                        "content": f"Article content:\n{main_content}\n\nCreate a single tweet that would make people want to read this article."
                     }
                 ],
                 max_tokens=100,
@@ -68,13 +72,14 @@ Do not use hashtags or emojis."""
 
             tweet = response.choices[0].message.content.strip()
             
-            # Ensure URL is at the end and tweet is within limits
-            if url not in tweet:
-                tweet = f"{tweet[:200]}... {url}"
-            if len(tweet) > 280:
-                tweet = f"{tweet[:277]}..."
+            # Ensure tweet is within length limit and add URL
+            if len(tweet) > max_tweet_length:
+                tweet = tweet[:max_tweet_length-3] + "..."
+            
+            # Always add the full URL at the end
+            final_tweet = f"{tweet} {url}"
 
-            return tweet
+            return final_tweet
 
         except Exception as e:
             print(f"Error processing article: {str(e)}")
