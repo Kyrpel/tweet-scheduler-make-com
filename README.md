@@ -1,4 +1,5 @@
-# Tweet Creation & Scheduler with Make.com
+# Tweet Creation from Articles/Screenshots
+# & Scheduler with Make.com
 
 
 A web application that helps create and schedule engaging tweets from various content sources. The app processes text and images, generates tweet variations using GPT-4, and allows scheduling through Google Sheets integration.
@@ -6,6 +7,8 @@ A web application that helps create and schedule engaging tweets from various co
 
 ![Demo](images/Media1.gif)
 
+
+![Demo](images/make.jpg)
 
 
 ## Features
