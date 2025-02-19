@@ -19,6 +19,37 @@ function App() {
   const [error, setError] = useState(null)
   const [savedCredentials, setSavedCredentials] = useState(null)
   const [activeTab, setActiveTab] = useState('tweets') // 'tweets' or 'hooks'
+  const [selectedModel, setSelectedModel] = useState('gpt4')
+  const [apiKeys, setApiKeys] = useState({
+    openai: '',
+    anthropic: '',
+    google: '',
+    groq: ''
+  })
+
+  // Add model options
+  const MODEL_OPTIONS = {
+    gpt4: {
+      name: 'GPT-4',
+      provider: 'openai',
+      cost: '$0.03/1K tokens'
+    },
+    claude: {
+      name: 'Claude 3',
+      provider: 'anthropic',
+      cost: '$0.025/1K tokens'
+    },
+    gemini: {
+      name: 'Gemini Pro',
+      provider: 'google',
+      cost: '$0.01/1K tokens'
+    },
+    groq: {
+      name: 'Groq LLM',
+      provider: 'groq',
+      cost: '$0.02/1K tokens'
+    }
+  }
 
   // ... [Previous useEffect and other handlers remain the same]
 
@@ -264,6 +295,55 @@ function App() {
                 rows="10"
                 placeholder="Enter your tweets here, one per line, or paste images above..."
               />
+            </div>
+
+            <div className="form-group model-selection">
+              <label htmlFor="modelSelect">Select Model:</label>
+              <select 
+                id="modelSelect"
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                className="model-dropdown"
+              >
+                {Object.entries(MODEL_OPTIONS).map(([key, model]) => (
+                  <option key={key} value={key}>
+                    {model.name} - {model.cost}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group api-keys">
+              <label>API Keys:</label>
+              <div className="api-key-inputs">
+                {Object.entries(MODEL_OPTIONS)
+                  .filter(([key, model]) => 
+                    model.provider === MODEL_OPTIONS[selectedModel].provider ||
+                    apiKeys[model.provider]
+                  )
+                  .map(([key, model]) => (
+                    <div key={key} className="api-key-input">
+                      <label htmlFor={`${model.provider}Key`}>
+                        {model.name} API Key:
+                      </label>
+                      <div className="key-input-container">
+                        <input
+                          type="password"
+                          id={`${model.provider}Key`}
+                          value={apiKeys[model.provider]}
+                          onChange={(e) => setApiKeys(prev => ({
+                            ...prev,
+                            [model.provider]: e.target.value
+                          }))}
+                          placeholder={`Enter ${model.name} API key`}
+                        />
+                        <span className="key-status">
+                          {apiKeys[model.provider] ? '✓ Set' : 'Not set'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </div>
 
             <div className="button-group">

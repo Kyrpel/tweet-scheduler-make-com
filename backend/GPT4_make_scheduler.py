@@ -30,7 +30,9 @@ def split_tweets_with_gpt4(text: str) -> List[str]:
 4. Remove only unnecessary formatting, hashtags, and emojis
 5. Keep the original voice and style
 6. Do not use the name and date of the author in the tweets
-7. Do not add any labels or numbering (like "Tweet 1:", "Tweet 2:"), neither 1. 2. 3.
+7. Do not add any labels, numbers, or prefixes (like "Tweet 1:", "Tweet 2:", etc.)
+8. Separate tweets with double newlines only
+
 Guidelines:
 - Make minimal changes - only adjust what's absolutely necessary
 - Keep the original message's exact meaning
@@ -40,11 +42,14 @@ Guidelines:
 - Split naturally at sentence boundaries if needed
 - Add hooks or creative elements if applicable
 - Keep it human and authentic
+- Do not number or label the tweets in any way
 
-Example of appropriate changes:
-Original: "10 AMAZING!!! tips for #coding 🚀 (MUST READ) ..."
-Becomes: "10 amazing tips for coding that you must read ..."
-"""
+Example output format:
+If you're a small business owner unsure about social media marketing, what advice would you give?
+
+The most effective content is visual. Use images, videos, and infographics. Visuals attract attention.
+
+Want to grow faster? Learn new things, put them into action, and stay consistent."""
                 },
                 {
                     "role": "user",

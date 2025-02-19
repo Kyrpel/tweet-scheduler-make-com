@@ -8,6 +8,10 @@ import sys
 import logging
 from hooks_config import VIRAL_HOOKS
 from werkzeug.urls import quote as url_quote
+from openai import OpenAI
+from anthropic import Anthropic
+from gemini import Gemini
+from groq import Groq
 
 sys.path.append(str(Path(__file__).parent))
 
@@ -102,6 +106,25 @@ def get_category_hooks(category):
 def process_tweets():
     """Process tweets without scheduling them."""
     try:
+        data = request.json
+        model = data.get('model', 'gpt4')
+        api_key = data.get('apiKey')
+        
+        if not api_key:
+            return jsonify({'error': 'API key is required'}), 400
+            
+        # Initialize appropriate client based on model
+        if model == 'gpt4':
+            client = OpenAI(api_key=api_key)
+        elif model == 'claude':
+            client = Anthropic(api_key=api_key)
+        elif model == 'gemini':
+            client = Gemini(api_key=api_key)
+        elif model == 'groq':
+            client = Groq(api_key=api_key)
+        else:
+            return jsonify({'error': 'Invalid model selected'}), 400
+            
         logger.debug("Starting tweet processing")
         all_tweets = []
         raw_text_content = []
