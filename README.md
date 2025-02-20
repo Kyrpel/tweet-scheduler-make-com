@@ -15,7 +15,7 @@ allows scheduling through Google Sheets integration.
   - ✅ Save full transcripts of video content (backend\transcripts)
 
 - **Tweet Generation**
-  - ✅ Generate engaging tweets using GPT-4
+  - ✅ Humanized tweets
   - ✅ Maintain original message intent
   - ✅ Include viral hooks and patterns
   - ✅ Auto-format to Twitter length

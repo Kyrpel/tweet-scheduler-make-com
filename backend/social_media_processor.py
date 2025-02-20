@@ -26,12 +26,16 @@ class SocialMediaProcessor:
         return asyncio.run(self.process_url(url))
 
     async def process_url(self, url: str) -> Optional[str]:
-        """Process social media URL and return a tweet-worthy summary."""
+        """Process URL and return a tweet-worthy summary."""
         try:
             platform = self._detect_platform(url)
             content = None
 
-            if platform == 'tiktok':
+            if platform == 'article':
+                from article_processor import ArticleProcessor
+                processor = ArticleProcessor()
+                return processor.process_url_sync(url)
+            elif platform == 'tiktok':
                 content = await self._process_tiktok(url)
             elif platform == 'instagram':
                 content = await self._process_instagram(url)
@@ -41,10 +45,11 @@ class SocialMediaProcessor:
             if not content:
                 raise Exception(f"No content extracted from {platform} URL")
 
-            # Save the full transcript
-            transcript_path = await self._save_transcript(content, url, platform)
-            if transcript_path:
-                logger.info(f"Transcript saved to: {transcript_path}")
+            # Save transcript for social media content
+            if platform != 'article':
+                transcript_path = await self._save_transcript(content, url, platform)
+                if transcript_path:
+                    logger.info(f"Transcript saved to: {transcript_path}")
 
             return self._create_tweet(content, url, platform)
 
@@ -53,15 +58,28 @@ class SocialMediaProcessor:
             return None
 
     def _detect_platform(self, url: str) -> str:
-        """Detect social media platform from URL."""
+        """Detect content platform from URL."""
         domain = urlparse(url).netloc.lower()
+        
+        # Social media platforms
         if 'tiktok' in domain:
             return 'tiktok'
         elif 'instagram' in domain:
             return 'instagram'
         elif 'youtube' in domain or 'youtu.be' in domain:
             return 'youtube'
+        # News/article domains
+        elif any(site in domain for site in [
+            'bbc.', 'cnn.', 'reuters.', 'news.', 'medium.', 'blog.',
+            'forbes.', 'techcrunch.', 'theverge.', 'wired.', 'nytimes.',
+            'washingtonpost.', 'guardian.', 'bloomberg.'
+        ]):
+            return 'article'
         else:
+            # Try to detect if it's an article by checking URL patterns
+            path = urlparse(url).path.lower()
+            if any(ext in path for ext in ['/article/', '/post/', '/blog/', '/news/', '.html', '.htm']):
+                return 'article'
             raise ValueError("Unsupported platform")
 
     async def _process_tiktok(self, url: str) -> Optional[str]:
@@ -239,6 +257,7 @@ class SocialMediaProcessor:
             logger.error(f"Error saving transcript: {str(e)}")
             return None
 
+   
     def _create_tweet(self, content: str, url: str, platform: str) -> str:
         """Create an engaging tweet from the social media content."""
         try:
@@ -249,26 +268,33 @@ class SocialMediaProcessor:
                 messages=[
                     {
                         "role": "system",
-                        "content": """Create a concise, complete tweet from this content. The tweet should:
-1. Be under 280 characters (no truncation)
-2. Focus on the key benefit or main feature
-3. Use active, engaging language
-4. Include a clear value proposition
-5. End with a complete thought
-6. Use natural language that flows well
-7. Avoid technical jargon unless necessary
-8. Include a clear action or takeaway
+                        "content": """You're sharing an interesting discovery from social media. Write a tweet that sounds natural and conversational, like you're sharing your thoughts with friends.
 
-Format: Start with the benefit/outcome, explain how, end with impact.
-Do not include hashtags, emojis, URLs, or ellipsis."""
-                    },
-                    {
-                        "role": "user",
-                        "content": f"""Content from {platform}:
-{content}
+                        Guidelines for authentic writing:
+                        1. Focus on what excited or surprised you about the content
+                        2. Use casual, everyday language
+                        3. Share your genuine reaction or thoughts
+                        4. Mention specific details that stood out
+                        5. Add your personal take or insight
+                        6. Keep it conversational and friendly
+                        7. Make others want to join the conversation
 
-Create a complete tweet that captures the value proposition and key feature. Make sure it ends with a complete thought and fits in one tweet."""
-                    }
+                        Important:
+                        - Don't mention content creators by name
+                        - Skip technical jargon unless absolutely necessary
+                        - Avoid promotional language or buzzwords
+                        - No hashtags or emojis
+                        - Sound genuinely interested, not promotional
+
+                        Write as if you're texting a friend about something cool you just learned."""
+                                            },
+                                            {
+                                                "role": "user",
+                                                "content": f"""Just saw this interesting {platform} post:
+                        {content}
+
+                        Share what you found interesting about it in a natural way. Keep it under 280 characters and make it sound like you're sharing a cool discovery with friends."""
+                                            }
                 ],
                 max_tokens=100,
                 temperature=0.7
