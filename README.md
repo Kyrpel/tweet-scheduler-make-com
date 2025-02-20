@@ -1,15 +1,16 @@
 # Tweet Creation from Articles/Screenshots & Social Media
 ## & Scheduler with Make.com
 
-A web application that helps create and schedule engaging tweets from various content sources. The app processes text, images, social media content, and generates tweet variations using GPT-4.
+A web application that helps create and schedule engaging tweets from various content sources. The app processes text and images, generates tweet variations using GPT-4, and 
+allows scheduling through Google Sheets integration.
 
 ## ✅ Completed Features
 
 - **Content Processing**
   - ✅ Process articles into tweet-friendly format
   - ✅ Extract text from screenshots using GPT-4 Vision
-  - ✅ Process TikTok videos with transcription
-  - ✅ Process Instagram videos with transcription
+  - ✅ Process TikTok videos with transcription ---> Tweet
+  - ✅ Process Instagram videos with transcription ---> Tweet
   - ✅ Process YouTube videos with transcription
   - ✅ Save full transcripts of video content
 
