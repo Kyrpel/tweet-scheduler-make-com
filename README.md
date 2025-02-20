@@ -21,13 +21,12 @@ allows scheduling through Google Sheets integration.
   - ✅ Auto-format to Twitter length
 
 - **Integration**
-  - ✅ Send to Google Sheets
+  - ✅ Send tweets to Google Sheets
   
 
 ## ⬜ Pending Features
 
 - **Content Processing**
-  - ⬜ Direct text to tweet conversion
   - ⬜ Twitter thread creation
   - ⬜ LinkedIn post processing
   - ⬜ Facebook post processing
@@ -129,8 +128,6 @@ Create `config.json` in project root:
 }
 ```
 
-## Usage
-
 1. **Content Input**
    - Paste text directly
    - Upload/paste images
@@ -166,9 +163,32 @@ Create `config.json` in project root:
 
 - **Backend**
   - Flask
-  - OpenAI GPT-4
+  - OpenAI GPT-4 & Whisper
   - Google Sheets API
-  - crawl4ai (for article extraction)
+  - crawl4ai (article extraction)
+  - yt-dlp (video download)
+  - instaloader (Instagram content)
+
+- **AI Features**
+  - GPT-4 for tweet generation
+  - GPT-4 Vision for image processing
+  - Whisper for video transcription
+  - Custom prompting system
+
+- **Integrations**
+  - Google Sheets (tweet scheduling)
+  - Make.com (automation workflow)
+  - OpenAI API
+  - Social Media Platforms:
+    - TikTok
+    - Instagram
+    - YouTube
+
+- **Development Tools**
+  - Python 3.9+
+  - Node.js
+  - Git
+  - FFmpeg (audio processing)
 
 ## Project Structure
 
