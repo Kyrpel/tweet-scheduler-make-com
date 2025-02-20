@@ -125,19 +125,11 @@ Create `.env` file in project root:
 OPENAI_API_KEY=your-openai-key
 
 # Google Sheets Configuration
-GOOGLE_SHEETS_CREDENTIALS_FILE=your-credentials.json
+GOOGLE_SHEETS_CREDENTIALS_FILE=path/to/your-credentials.json
 GOOGLE_SHEETS_ID=your-sheet-id-from-url
 ```
 
 > **Note**: A `.env.example` file is provided as a template. Copy it to `.env` and fill in your values.
-
-### Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `OPENAI_API_KEY` | Your OpenAI API key for GPT-4 and Whisper | Yes |
-| `GOOGLE_SHEETS_CREDENTIALS_FILE` | Path to Google Sheets credentials JSON file | Yes |
-| `GOOGLE_SHEETS_ID` | ID of your Google Sheet (from URL) | Yes |
 
 ## Tech Stack
 
