@@ -7,11 +7,11 @@ allows scheduling through Google Sheets integration.
 ## ✅ Completed Features
 
 - **Content Processing**
-  - ✅ Process articles into tweet-friendly format
-  - ✅ Extract text from screenshots using GPT-4 Vision
-  - ✅ TikTok videos ---> Tweet
-  - ✅ Instagram videos ---> Tweet
-  - ✅ YouTube videos ---> Tweet
+  - ✅ Articles URL ---> Tweet
+  - ✅ Screenshots(support multiple screenshots) ---> Tweets
+  - ✅ TikTok video URL ---> Tweet
+  - ✅ Instagram video URL ---> Tweet
+  - ✅ YouTube video URL ---> Tweet
   - ✅ Save full transcripts of video content (backend\transcripts)
 
 - **Tweet Generation**
@@ -50,11 +50,11 @@ Output: "Breaking down the numbers: Our latest analytics reveal a 3x increase in
 Input: TikTok about social media automation
 Output: "Revolutionize your social media game with AI agents! From automated engagement to smart content curation, discover how AI is changing the future of social media management."
 
-### 1. Fisrt setup the app
+### 1. First setup the app
 
 ![Demo](images/Media1.gif)
 
-### 2. Then setup the below simple make.com workflow
+### 2. Then setup the below make.com workflow
 
 ![Demo](images/make.jpg)
 
@@ -75,7 +75,7 @@ Output: "Revolutionize your social media game with AI agents! From automated eng
 
 - **Two-Step Publishing**
   1. Process content and review generated tweets
-  2. Schedule approved tweets to Google Sheets
+  2. Schedule approved tweets to Google Sheets (you have to setup a make.com scenario)
 
 ## Setup
 
@@ -119,40 +119,25 @@ python backend/app.py
 
 ### Configuration
 
-Create `config.json` in project root:
-```json
-{
-  "openai_api_key": "your-openai-key",
-  "google_sheets_credentials_file": "./credentials.json",
-  "google_sheets_id": "your-sheet-id-from-url"
-}
+Create `.env` file in project root:
+```env
+# OpenAI API Key for GPT-4 and Whisper
+OPENAI_API_KEY=your-openai-key
+
+# Google Sheets Configuration
+GOOGLE_SHEETS_CREDENTIALS_FILE=your-credentials.json
+GOOGLE_SHEETS_ID=your-sheet-id-from-url
 ```
 
-1. **Content Input**
-   - Paste text directly
-   - Upload/paste images
-   - Enter article URLs
+> **Note**: A `.env.example` file is provided as a template. Copy it to `.env` and fill in your values.
 
-   ![Content Input Demo](images/video%201.gif)
+### Environment Variables
 
-2. **Processing**
-   - Click "Process Tweets" to generate tweet variations
-   - Review and edit generated tweets in textarea
-
-   ![Processing Demo](images/processing.png)
-
-3. **Scheduling**
-   - Review processed tweets
-   - Click "Send to Google Sheets" to schedule
-
-   ![Scheduling Demo](images/scheduling.png)
-
-4. **Viral Hooks**
-   - Browse hook categories for inspiration
-   - Search for specific hooks
-   - Copy hooks to use in tweets
-
-   ![Viral Hooks Demo](images/hooks.png)
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `OPENAI_API_KEY` | Your OpenAI API key for GPT-4 and Whisper | Yes |
+| `GOOGLE_SHEETS_CREDENTIALS_FILE` | Path to Google Sheets credentials JSON file | Yes |
+| `GOOGLE_SHEETS_ID` | ID of your Google Sheet (from URL) | Yes |
 
 ## Tech Stack
 
