@@ -14,6 +14,7 @@ sys.path.append(str(Path(__file__).parent))
 from GPT4_make_scheduler import split_tweets_with_gpt4, GoogleSheetsManager, add_tweets_to_sheet
 from vision_processor import VisionProcessor
 from article_processor import ArticleProcessor
+from social_media_processor import SocialMediaProcessor
 
 app = Flask(__name__)
 CORS(app)
@@ -144,6 +145,32 @@ def process_tweets():
 
     except Exception as e:
         logger.error(f"Error details: {traceback.format_exc()}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/process-social-media', methods=['POST'])
+def process_social_media():
+    """Process social media URL and return tweet content."""
+    try:
+        data = request.json
+        url = data.get('url')
+        
+        if not url:
+            return jsonify({'error': 'No URL provided'}), 400
+
+        processor = SocialMediaProcessor()
+        content = processor.process_url_sync(url)
+        
+        if not content:
+            return jsonify({'error': 'Failed to process social media content'}), 400
+
+        return jsonify({
+            'tweet': content,  # Now contains just the tweet without URL
+            'originalContent': content,
+            'sourceUrl': url  # Separate field for URL if needed
+        })
+
+    except Exception as e:
+        logger.error(f"Error processing social media: {traceback.format_exc()}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

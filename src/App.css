@@ -591,3 +591,46 @@ textarea {
   color: #4a5568;
   line-height: 1.5;
 }
+
+/* Add these styles to your existing CSS */
+.social-media-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.platform-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+
+.platform-badge.instagram {
+  background-color: #e1306c;
+  color: white;
+}
+
+.platform-badge.tiktok {
+  background-color: #000000;
+  color: white;
+}
+
+.platform-badge.youtube {
+  background-color: #ff0000;
+  color: white;
+}
+
+/* Update existing styles */
+.url-input-container button {
+  min-width: 120px;  /* Ensure buttons have consistent width */
+}
+
+.url-input-container input::placeholder {
+  color: #a0aec0;
+  font-size: 0.9rem;
+}

@@ -15,6 +15,7 @@ function App() {
     pastedImages: [],
     articleUrl: '',
     articleContent: '',
+    socialMediaUrl: '',
   })
   const [loading, setLoading] = useState(false)
   const [processingStep, setProcessingStep] = useState('')
@@ -194,6 +195,43 @@ function App() {
     }
   }
 
+  const handleSocialMediaProcess = async () => {
+    setLoading(true);
+    try {
+      setProcessingStep('Processing social media content...');
+      const response = await fetch('http://localhost:3000/api/process-social-media', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: formData.socialMediaUrl,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to process social media content');
+      }
+
+      // Update both the content and tweets textarea
+      setFormData(prev => ({
+        ...prev,
+        tweets: prev.tweets 
+          ? `${prev.tweets}\n\n${result.tweet}` 
+          : result.tweet,
+        socialMediaUrl: '', // Clear the URL input after success
+      }));
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error processing social media content');
+    } finally {
+      setLoading(false);
+      setProcessingStep('');
+    }
+  };
+
   return (
     <div className="container">
       <div className="title-container">
@@ -232,6 +270,30 @@ function App() {
                   <h3>Processed Article Content</h3>
                   <p>{formData.articleContent}</p>
                 </div>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="socialMediaUrl">Social Media URL</label>
+              <div className="url-input-container">
+                <input
+                  type="url"
+                  id="socialMediaUrl"
+                  value={formData.socialMediaUrl}
+                  onChange={(e) => setFormData(prev => ({ ...prev, socialMediaUrl: e.target.value }))}
+                  placeholder="Enter Instagram, TikTok, or YouTube URL..."
+                />
+                <button 
+                  type="button"
+                  onClick={handleSocialMediaProcess}
+                  disabled={!formData.socialMediaUrl || loading}
+                >
+                  Process Social Media
+                </button>
+              </div>
+              
+              {loading && processingStep === 'Processing social media content...' && (
+                <ProcessingSpinner text="Processing social media content..." />
               )}
             </div>
 
