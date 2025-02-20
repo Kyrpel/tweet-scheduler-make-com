@@ -9,10 +9,10 @@ allows scheduling through Google Sheets integration.
 - **Content Processing**
   - ✅ Process articles into tweet-friendly format
   - ✅ Extract text from screenshots using GPT-4 Vision
-  - ✅ Process TikTok videos with transcription ---> Tweet
-  - ✅ Process Instagram videos with transcription ---> Tweet
-  - ✅ Process YouTube videos with transcription
-  - ✅ Save full transcripts of video content
+  - ✅ TikTok videos ---> Tweet
+  - ✅ Instagram videos ---> Tweet
+  - ✅ YouTube videos ---> Tweet
+  - ✅ Save full transcripts of video content (backend\transcripts)
 
 - **Tweet Generation**
   - ✅ Generate engaging tweets using GPT-4
@@ -21,8 +21,8 @@ allows scheduling through Google Sheets integration.
   - ✅ Auto-format to Twitter length
 
 - **Integration**
-  - ✅ Google Sheets scheduling integration
-  - ✅ Make.com workflow support
+  - ✅ Send to Google Sheets
+  
 
 ## ⬜ Pending Features
 
